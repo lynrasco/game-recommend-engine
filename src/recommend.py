@@ -1,7 +1,7 @@
 # GameRecommendationEngine/src/recommend.py
+import numpy as np
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
-
 
 def create_matrices(games):
 
@@ -61,8 +61,8 @@ def recommend(
     ).flatten()
 
     final_scores = (
-        0.4 * genre_scores +
-        0.5 * summary_scores +
+        0.3 * genre_scores +
+        0.6 * summary_scores +
         0.1 * platform_scores
     )
 

@@ -42,8 +42,8 @@ def evaluate_recommendations(
         ).flatten()
 
         final_scores = (
-            0.4 * genre_scores +
-            0.5 * summary_scores +
+            0.3 * genre_scores +
+            0.6 * summary_scores +
             0.1 * platform_scores
         )
 
@@ -55,8 +55,6 @@ def evaluate_recommendations(
             final_scores[similar_game_indices].mean()
         )
 
-        # Calculate how many different genres
-        # appear across the recommendations
         recommendation_genres = set()
 
         for index in similar_game_indices:
@@ -95,6 +93,7 @@ if __name__ == "__main__":
         "Persona 5 Royal",
         "Stray"
     ]
+
     results = evaluate_recommendations(
         games,
         genre_matrix,

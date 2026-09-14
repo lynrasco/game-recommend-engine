@@ -10,7 +10,7 @@ while True:
     game_title = input("\nEnter a game (or type 'e' to exit): ")
 
     if game_title.lower() == "e":
-        print("Game Recommendation Engine closing...")
+        print("Closing Game Recommendation Engine...")
         break
 
     recommend(
