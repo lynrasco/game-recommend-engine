@@ -40,8 +40,7 @@ def recommend(
     ]
 
     if matching_games.empty:
-        print("Game not found.")
-        return
+        return []
 
     game_index = matching_games.index[0]
 
@@ -70,25 +69,25 @@ def recommend(
         ::-1
     ][1:number_of_recommendations + 1]
 
-    print(
-        f"\nGames similar to "
-        f"{games.iloc[game_index]['Title']}:"
-    )
+    recommendations = []
 
     for index in similar_game_indices:
+
         recommended_game = games.iloc[index]
 
-        shared_genres = set(
-            games.iloc[game_index]["Genre_List"]
-        ) & set(
-            recommended_game["Genre_List"]
+        shared_genres = (
+            set(games.iloc[game_index]["Genre_List"])
+            &
+            set(recommended_game["Genre_List"])
         )
-        
-        print(
-            f"\n{recommended_game['Title']}"
-            f"\nOverall similarity: {final_scores[index]:.2f}"
-            f"\nGenre similarity: {genre_scores[index]:.2f}"
-            f"\nSummary similarity: {summary_scores[index]:.2f}"
-            f"\nPlatform similarity: {platform_scores[index]:.2f}"
-            f"\nShared genres: {', '.join(shared_genres)}"
-        )
+
+        recommendations.append({
+            "title": recommended_game["Title"],
+            "overall_similarity": final_scores[index],
+            "genre_similarity": genre_scores[index],
+            "summary_similarity": summary_scores[index],
+            "platform_similarity": platform_scores[index],
+            "shared_genres": sorted(shared_genres)
+        })
+
+    return recommendations
