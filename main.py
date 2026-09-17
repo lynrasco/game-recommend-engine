@@ -18,5 +18,5 @@ while True:
         games,
         genre_matrix,
         summary_matrix,
-        platform_matrix
+        platform_matrix,
     )

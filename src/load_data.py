@@ -29,8 +29,9 @@ def load_games():
     games["Genres"] = games["Genre_List"].apply(lambda genres: " ".join(genres))
 
     games["Platforms"] = games["Platforms"].fillna("")
-    games["Platforms"] = games["Platforms"].apply(
-        lambda value: " ".join(parse_genres(value))
+    games["Platform_List"] = games["Platforms"].apply(parse_genres)
+    games["Platforms"] = games["Platform_List"].apply(
+        lambda platforms: " ".join(platforms)
     )
 
 

@@ -1,5 +1,4 @@
 # GameRecommendationEngine/src/recommend.py
-import numpy as np
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
@@ -32,7 +31,9 @@ def recommend(
     genre_matrix,
     summary_matrix,
     platform_matrix,
-    number_of_recommendations=5
+    number_of_recommendations=5,
+    minimum_rating=0.0,
+    selected_platform="Any Platform"
 ):
 
     matching_games = games[
@@ -43,6 +44,18 @@ def recommend(
         return []
 
     game_index = matching_games.index[0]
+
+    candidate_indices = games.index[
+        games["Rating"].fillna(0) >= minimum_rating
+    ]
+
+    if selected_platform != "Any Platform":
+        candidate_indices = candidate_indices[
+            candidate_indices.map(
+                lambda index:
+                selected_platform in games.iloc[index]["Platform_List"]
+            )
+        ]
 
     genre_scores = cosine_similarity(
         genre_matrix[game_index],
@@ -65,9 +78,13 @@ def recommend(
         0.1 * platform_scores
     )
 
-    similar_game_indices = final_scores.argsort()[
-        ::-1
-    ][1:number_of_recommendations + 1]
+    ranked_indices = final_scores.argsort()[::-1]
+
+    similar_game_indices = [
+        index
+        for index in ranked_indices
+        if index != game_index and index in candidate_indices
+    ][:number_of_recommendations]
 
     recommendations = []
 
@@ -83,6 +100,12 @@ def recommend(
 
         recommendations.append({
             "title": recommended_game["Title"],
+            "release_date": recommended_game["Release_Date"],
+            "developers": recommended_game["Developers"],
+            "summary": recommended_game["Summary"],
+            "platforms": recommended_game["Platforms"],
+            "genres": recommended_game["Genre_List"],
+            "rating": recommended_game["Rating"],
             "overall_similarity": final_scores[index],
             "genre_similarity": genre_scores[index],
             "summary_similarity": summary_scores[index],
