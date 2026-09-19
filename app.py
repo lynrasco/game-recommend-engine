@@ -2,14 +2,21 @@ import streamlit as st
 
 from src.load_data import load_games
 from src.recommend import create_matrices, recommend
+from src.ui import display_recommendation
 
+st.set_page_config(
+    page_title="Game Recommendation Engine",
+    page_icon="🎮",
+    layout="wide"
+)
 
 st.title("Game Recommendation Engine")
 
-st.write(
-    "Find games similar to your favorites using "
-    "genre, description, and platform similarity."
+st.markdown(
+    "Discover your next game based on **genre, description, and platform similarity**."
 )
+
+st.divider()
 
 
 @st.cache_data
@@ -56,17 +63,39 @@ selected_platform = st.sidebar.selectbox(
     platform_options
 )
 
+st.subheader("Find a game")
 
-game_title = st.text_input(
-    "Find a game:",
-    placeholder="Type a game title..."
+game_search = st.text_input(
+    "Search by title",
+    placeholder="Try Hades, Minecraft, Portal 2..."
 )
+
+matching_titles = []
+
+if game_search:
+    matching_titles = games[
+        games["Title"].str.contains(
+            game_search,
+            case=False,
+            na=False
+        )
+    ]["Title"].tolist()[:20]
+
+game_title = None
+
+if matching_titles:
+    game_title = st.selectbox(
+        "Select a game:",
+        matching_titles
+    )
+elif game_search:
+    st.warning("No games found. Try another title.")
 
 
 if st.button("Recommend Games"):
 
     if not game_title:
-        st.warning("Please enter a game title.")
+        st.warning("Please select a game.")
 
     else:
         recommendations = recommend(
@@ -81,102 +110,13 @@ if st.button("Recommend Games"):
         )
 
         if not recommendations:
-            st.error("Game not found.")
+            st.warning(
+                "No recommendations matched your selected filters. "
+                "Try lowering the minimum rating or selecting a different platform."
+            )
 
         else:
             st.subheader(f"Games similar to {game_title}")
 
             for recommendation in recommendations:
-                with st.container(border=True):
-                    col1, col2 = st.columns([4, 1])
-
-                    with col1:
-                        st.subheader(recommendation["title"])
-
-                    with col2:
-                        st.metric(
-                            "Match",
-                            f"{recommendation['overall_similarity']:.0%}"
-                        )
-
-                    st.write(
-                        "**Genres:** "
-                        + " • ".join(recommendation["genres"])
-                    )
-
-                    col1, col2 = st.columns(2)
-
-                    with col1:
-                        developers = recommendation["developers"]
-
-                        if isinstance(developers, str):
-                            try:
-                                import ast
-                                developers = ast.literal_eval(developers)
-                            except (ValueError, SyntaxError):
-                                developers = [developers]
-
-                        st.write(
-                            "**Developer:** "
-                            + ", ".join(developers)
-                        )
-
-                    with col2:
-                        st.write(
-                            "**Release date:** "
-                            + str(recommendation["release_date"])
-                        )
-
-                        st.write(
-                            "**Platforms:** "
-                            + recommendation["platforms"]
-                        )
-
-                        rating = recommendation["rating"]
-
-                        if rating == rating:
-                            full_stars = round(rating)
-                            empty_stars = 5 - full_stars
-                            stars = "★" * full_stars + "☆" * empty_stars
-                            st.write(f"**Rating:** {stars}")
-                        else:
-                            st.write("**Rating:** Not rated")
-
-                        st.write("**About:**")
-                        st.write(recommendation["summary"])
-
-                        st.write("**Similarity breakdown:**")
-                        col1, col2, col3 = st.columns(3)
-
-                        with col1:
-                            st.write("Genre")
-                            st.progress(
-                                float(recommendation["genre_similarity"])
-                            )
-
-                            st.caption(
-                                f"{recommendation['genre_similarity']:.2f}"
-                            )
-
-                        with col2:
-                            st.write("Description")
-                            st.progress(
-                                float(recommendation["summary_similarity"])
-                            )
-                            st.caption(
-                                f"{recommendation['summary_similarity']:.2f}"
-                            )
-
-                        with col3:
-                            st.write("Platform")
-                            st.progress(
-                                float(recommendation["platform_similarity"])
-                            )
-                            st.caption(
-                                f"{recommendation['platform_similarity']:.2f}"
-                            )
-
-                        st.write(
-                            "**Shared genres:** "
-                            + ", ".join(recommendation["shared_genres"])
-                        )
+                display_recommendation(recommendation, game_title)
