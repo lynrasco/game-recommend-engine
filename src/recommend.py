@@ -33,7 +33,9 @@ def recommend(
     platform_matrix,
     number_of_recommendations=5,
     minimum_rating=0.0,
-    selected_platform="Any Platform"
+    selected_platform="Any Platform",
+    selected_genre="Any Genre",
+    minimum_year=None
 ):
 
     matching_games = games[
@@ -55,6 +57,19 @@ def recommend(
                 lambda index:
                 selected_platform in games.iloc[index]["Platform_List"]
             )
+        ]
+
+    if selected_genre != "Any Genre":
+        candidate_indices = candidate_indices[
+            candidate_indices.map(
+                lambda index:
+                selected_genre in games.iloc[index]["Genre_List"]
+            )
+        ]
+
+    if minimum_year:
+        candidate_indices = candidate_indices[
+            games.loc[candidate_indices, "Release_Year"] >= minimum_year
         ]
 
     genre_scores = cosine_similarity(

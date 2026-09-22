@@ -1,12 +1,11 @@
 import streamlit as st
-
+import random
 from src.load_data import load_games
 from src.recommend import create_matrices, recommend
 from src.ui import display_recommendation
 
 st.set_page_config(
     page_title="Game Recommendation Engine",
-    page_icon="🎮",
     layout="wide"
 )
 
@@ -15,7 +14,7 @@ st.markdown(
     <style>
 
     .stApp {
-        background-color: #11141c;
+        background-color: #0F1117;
     }
 
     .block-container {
@@ -35,13 +34,15 @@ st.markdown(
     }
 
     [data-testid="stSidebar"] {
-        min-width: 280px;
-        max-width: 280px;
+        min-width: 290px;
+        max-width: 290px;
+        background-color: #151821;
+        border-right: 1px solid #292E3A;
     }
 
     div[data-testid="stVerticalBlockBorderWrapper"] {
-        background-color: #1c212b;
-        border: 1px solid #343b49;
+        background-color: #191D27;
+        border: 1px solid #2C3240;
         border-radius: 16px;
         padding: 1.25rem;
         margin-bottom: 1rem;
@@ -49,17 +50,28 @@ st.markdown(
 
     .stButton > button {
         width: 100%;
-        border-radius: 8px;
+        border-radius: 10px;
         font-weight: 600;
-        padding: 0.6rem 1rem;
+        padding: 0.65rem 1rem;
+        border: 1px solid #343A49;
+        background-color: #1C202B;
+        transition: all 0.2s ease;
+    }
+
+    .stButton > button:hover {
+        border-color: #8B7CF6;
+        color: #FFFFFF;
     }
 
     .stTextInput input {
-        border-radius: 8px;
+        border-radius: 10px;
+        background-color: #181C25;
+        border: 1px solid #343A49;
     }
 
     div[data-testid="stMetric"] {
-        background-color: #1d212b;
+        background-color: #202532;
+        border: 1px solid #303646;
         border-radius: 10px;
         padding: 0.8rem;
     }
@@ -67,6 +79,7 @@ st.markdown(
     .recommendation-spacer {
         height: 24px;
     }
+
 
     </style>
     """,
@@ -102,7 +115,15 @@ def load_data():
 games, genre_matrix, summary_matrix, platform_matrix = load_data()
 
 st.sidebar.markdown(
-    "### Recommendation Settings"
+    """
+    <div class="settings-header">
+        <div class="settings-title">Recommendation Settings</div>
+        <div class="settings-subtitle">
+            Customize your recommendations
+        </div>
+    </div>
+    """,
+    unsafe_allow_html=True
 )
 
 st.sidebar.caption(
@@ -135,6 +156,26 @@ platform_options = ["Any Platform"] + sorted(
 selected_platform = st.sidebar.selectbox(
     "Platform",
     platform_options
+)
+
+genre_options = sorted(
+    {
+        genre
+        for genres in games["Genre_List"]
+        for genre in genres
+    }
+)
+
+selected_genre = st.sidebar.selectbox(
+    "Genre",
+    ["Any Genre"] + genre_options
+)
+
+minimum_year = st.sidebar.slider(
+    "Released after",
+    int(games["Release_Year"].min()),
+    int(games["Release_Year"].max()),
+    int(games["Release_Year"].min())
 )
 
 st.subheader("Find your next game")
@@ -173,16 +214,37 @@ if matching_titles:
         "Select a game",
         matching_titles
     )
+
 elif game_search:
     st.warning("No games found. Try another title.")
 
 
-if st.button("Recommend Games"):
+recommend_button, surprise_button = st.columns(2)
+
+with recommend_button:
+    recommend_clicked = st.button("Recommend Games")
+
+with surprise_button:
+    surprise_clicked = st.button("Surprise Me")
+
+
+if surprise_clicked:
+    game_title = random.choice(
+        games["Title"].tolist()
+    )
+
+    st.info(
+        f"Surprise game selected: {game_title}"
+    )
+
+
+if recommend_clicked or surprise_clicked:
 
     if not game_title:
         st.warning("Please select a game.")
 
     else:
+
         recommendations = recommend(
             game_title,
             games,
@@ -191,21 +253,31 @@ if st.button("Recommend Games"):
             platform_matrix,
             number_of_recommendations,
             minimum_rating,
-            selected_platform
+            selected_platform,
+            selected_genre,
+            minimum_year
         )
 
         if not recommendations:
+
             st.warning(
                 "No recommendations matched your selected filters. "
                 "Try lowering the minimum rating or selecting a different platform."
             )
 
         else:
-            st.subheader(f"Games similar to {game_title}")
+
+            st.subheader(
+                f"Games similar to {game_title}"
+            )
 
             st.caption(
-                f"Based on genre, description, and platform similarity."
+                "Based on genre, description, and platform similarity."
             )
 
             for recommendation in recommendations:
-                display_recommendation(recommendation, game_title)
+
+                display_recommendation(
+                    recommendation,
+                    game_title
+                )

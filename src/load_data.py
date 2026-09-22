@@ -34,6 +34,11 @@ def load_games():
         lambda platforms: " ".join(platforms)
     )
 
+    games["Release_Year"] = pd.to_datetime(
+        games["Release_Date"],
+        errors="coerce"
+    ).dt.year
+
 
     games = games.reset_index(drop=True)
 
