@@ -10,10 +10,78 @@ st.set_page_config(
     layout="wide"
 )
 
+st.markdown(
+    """
+    <style>
+
+    .stApp {
+        background-color: #11141c;
+    }
+
+    .block-container {
+        max-width: 1200px;
+        padding-top: 3rem;
+        padding-bottom: 4rem;
+    }
+
+    h1 {
+        font-size: 3rem !important;
+        font-weight: 700 !important;
+        letter-spacing: -1px;
+    }
+
+    h2, h3 {
+        font-weight: 600 !important;
+    }
+
+    [data-testid="stSidebar"] {
+        min-width: 280px;
+        max-width: 280px;
+    }
+
+    div[data-testid="stVerticalBlockBorderWrapper"] {
+        background-color: #1c212b;
+        border: 1px solid #343b49;
+        border-radius: 16px;
+        padding: 1.25rem;
+        margin-bottom: 1rem;
+    }
+
+    .stButton > button {
+        width: 100%;
+        border-radius: 8px;
+        font-weight: 600;
+        padding: 0.6rem 1rem;
+    }
+
+    .stTextInput input {
+        border-radius: 8px;
+    }
+
+    div[data-testid="stMetric"] {
+        background-color: #1d212b;
+        border-radius: 10px;
+        padding: 0.8rem;
+    }
+
+    .recommendation-spacer {
+        height: 24px;
+    }
+
+    </style>
+    """,
+    unsafe_allow_html=True
+)
+
 st.title("Game Recommendation Engine")
 
 st.markdown(
-    "Discover your next game based on **genre, description, and platform similarity**."
+    """
+    <p style="font-size: 1.15rem; color: #a9b0bd; margin-top: -10px;">
+        Discover your next game using genre, description, and platform similarity.
+    </p>
+    """,
+    unsafe_allow_html=True
 )
 
 st.divider()
@@ -33,7 +101,13 @@ def load_data():
 
 games, genre_matrix, summary_matrix, platform_matrix = load_data()
 
-st.sidebar.header("Recommendation Settings")
+st.sidebar.markdown(
+    "### Recommendation Settings"
+)
+
+st.sidebar.caption(
+    "Customize how your recommendations are generated."
+)
 
 number_of_recommendations = st.sidebar.slider(
     "Number of recommendations",
@@ -63,7 +137,11 @@ selected_platform = st.sidebar.selectbox(
     platform_options
 )
 
-st.subheader("Find a game")
+st.subheader("Find your next game")
+
+st.caption(
+    "Choose a game you already love and we'll find similar titles."
+)
 
 game_search = st.text_input(
     "Search by title",
@@ -84,8 +162,15 @@ if game_search:
 game_title = None
 
 if matching_titles:
+
+    st.caption(
+        f"{len(matching_titles)} matching game"
+        + ("s" if len(matching_titles) != 1 else "")
+        + " found"
+    )
+
     game_title = st.selectbox(
-        "Select a game:",
+        "Select a game",
         matching_titles
     )
 elif game_search:
@@ -117,6 +202,10 @@ if st.button("Recommend Games"):
 
         else:
             st.subheader(f"Games similar to {game_title}")
+
+            st.caption(
+                f"Based on genre, description, and platform similarity."
+            )
 
             for recommendation in recommendations:
                 display_recommendation(recommendation, game_title)

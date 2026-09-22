@@ -6,10 +6,11 @@ from src.cover_art import get_game_cover
 
 def display_recommendation(recommendation, selected_game_title):
 
-    with st.container(border=True):
+    with st.container():
 
         cover_url = get_game_cover(recommendation["title"])
 
+        # Main card layout
         col1, col2 = st.columns([1, 3])
 
         # Cover
@@ -19,9 +20,12 @@ def display_recommendation(recommendation, selected_game_title):
                     cover_url,
                     use_container_width=True
                 )
+            else:
+                st.caption("No cover available")
 
-        # Main information
+        # Game information
         with col2:
+
             title_col, match_col = st.columns([3, 1])
 
             with title_col:
@@ -33,11 +37,15 @@ def display_recommendation(recommendation, selected_game_title):
                     f"{recommendation['overall_similarity']:.0%}"
                 )
 
-            st.write(
-                "**Genres:** "
-                + " • ".join(recommendation["genres"])
-            )
+            # Genres
+            genres = recommendation["genres"]
 
+            if genres:
+                st.markdown(
+                    " · ".join(genres)
+                )
+
+            # Developer
             developers = recommendation["developers"]
 
             if isinstance(developers, str):
@@ -46,21 +54,23 @@ def display_recommendation(recommendation, selected_game_title):
                 except (ValueError, SyntaxError):
                     developers = [developers]
 
-            st.write(
-                "**Developer:** "
-                + ", ".join(developers)
+            st.caption(
+                "Developer: " + ", ".join(developers)
             )
 
-            st.write(
-                "**Release date:** "
+            # Release date
+            st.caption(
+                "Release date: "
                 + str(recommendation["release_date"])
             )
 
-            st.write(
-                "**Platforms:** "
+            # Platforms
+            st.caption(
+                "Platforms: "
                 + recommendation["platforms"]
             )
 
+            # Rating
             rating = recommendation["rating"]
 
             if rating == rating:
@@ -69,42 +79,56 @@ def display_recommendation(recommendation, selected_game_title):
 
                 stars = "★" * full_stars + "☆" * empty_stars
 
-                st.write(f"**Rating:** {stars}")
+                st.write(
+                    f"**Rating:** {stars}  `{rating:.1f}/5`"
+                )
             else:
                 st.write("**Rating:** Not rated")
 
         st.divider()
 
         # Description
-        st.write("**About**")
-        st.write(recommendation["summary"])
+        st.markdown("#### About")
+
+        summary = recommendation["summary"]
+
+        if summary:
+            st.write(summary)
+        else:
+            st.caption("No description available.")
 
         # Similarity breakdown
-        st.write("**Similarity breakdown**")
+        st.markdown("#### Similarity breakdown")
 
         col1, col2, col3 = st.columns(3)
 
         with col1:
             st.metric(
                 "Genre",
-                f"{recommendation['genre_similarity']:.2f}"
+                f"{recommendation['genre_similarity']:.0%}"
             )
 
         with col2:
             st.metric(
                 "Description",
-                f"{recommendation['summary_similarity']:.2f}"
+                f"{recommendation['summary_similarity']:.0%}"
             )
 
         with col3:
             st.metric(
                 "Platform",
-                f"{recommendation['platform_similarity']:.2f}"
+                f"{recommendation['platform_similarity']:.0%}"
             )
 
+        # Why this game?
         display_why_this_game(
             recommendation,
             selected_game_title
+        )
+
+        st.markdown(
+            "<div class='recommendation-spacer'></div>",
+            unsafe_allow_html=True
         )
 
 
@@ -143,7 +167,7 @@ def display_why_this_game(recommendation, selected_game_title):
             "Some similarities across the game's features"
         )
 
-    st.write("**Why this game?**")
+    st.markdown("#### Why this game?")
 
     for reason in reasons:
         st.markdown(f"- {reason}")
