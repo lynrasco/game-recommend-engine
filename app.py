@@ -80,6 +80,22 @@ st.markdown(
         height: 24px;
     }
 
+    .settings-header {
+        padding: 0.5rem 0 1.25rem 0;
+    }
+
+    .settings-title {
+        font-size: 1.15rem;
+        font-weight: 700;
+        color: #F1F3F5;
+    }
+
+    .settings-subtitle {
+        font-size: 0.82rem;
+        color: #8F97A6;
+        margin-top: 0.3rem;
+    }
+
 
     </style>
     """,
@@ -126,10 +142,6 @@ st.sidebar.markdown(
     unsafe_allow_html=True
 )
 
-st.sidebar.caption(
-    "Customize how your recommendations are generated."
-)
-
 number_of_recommendations = st.sidebar.slider(
     "Number of recommendations",
     3,
@@ -172,7 +184,7 @@ selected_genre = st.sidebar.selectbox(
 )
 
 minimum_year = st.sidebar.slider(
-    "Released after",
+    "Minimum release year",
     int(games["Release_Year"].min()),
     int(games["Release_Year"].max()),
     int(games["Release_Year"].min())
@@ -184,10 +196,13 @@ st.caption(
     "Choose a game you already love and we'll find similar titles."
 )
 
-game_search = st.text_input(
-    "Search by title",
-    placeholder="Try Hades, Minecraft, Portal 2..."
-)
+search_col, _ = st.columns([1, 2])
+
+with search_col:
+    game_search = st.text_input(
+        "Search by title",
+        placeholder="Try Hades, Minecraft, Portal 2..."
+    )
 
 matching_titles = []
 
@@ -196,7 +211,8 @@ if game_search:
         games["Title"].str.contains(
             game_search,
             case=False,
-            na=False
+            na=False,
+            regex=False
         )
     ]["Title"].tolist()[:20]
 
@@ -227,15 +243,48 @@ with recommend_button:
 with surprise_button:
     surprise_clicked = st.button("Surprise Me")
 
-
 if surprise_clicked:
-    game_title = random.choice(
-        games["Title"].tolist()
-    )
 
-    st.info(
-        f"Surprise game selected: {game_title}"
-    )
+    surprise_games = games[
+        games["Rating"].fillna(0) >= minimum_rating
+    ]
+
+    if selected_platform != "Any Platform":
+        surprise_games = surprise_games[
+            surprise_games["Platform_List"].apply(
+                lambda platforms:
+                selected_platform in platforms
+            )
+        ]
+
+    if selected_genre != "Any Genre":
+        surprise_games = surprise_games[
+            surprise_games["Genre_List"].apply(
+                lambda genres:
+                selected_genre in genres
+            )
+        ]
+
+    surprise_games = surprise_games[
+        surprise_games["Release_Year"].fillna(0) >= minimum_year
+    ]
+
+    if surprise_games.empty:
+
+        st.warning(
+            "No games match your current Surprise Me filters. "
+            "Try relaxing one of the filters."
+        )
+
+    else:
+
+        game_title = random.choice(
+            surprise_games["Title"].tolist()
+        )
+
+        st.info(
+            f"Surprise game selected: {game_title}"
+        )
 
 
 if recommend_clicked or surprise_clicked:
@@ -262,7 +311,8 @@ if recommend_clicked or surprise_clicked:
 
             st.warning(
                 "No recommendations matched your selected filters. "
-                "Try lowering the minimum rating or selecting a different platform."
+                "Try lowering the minimum rating, changing the platform or genre, "
+                "or choosing an earlier release year."
             )
 
         else:
