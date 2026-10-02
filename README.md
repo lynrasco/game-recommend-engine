@@ -1,7 +1,7 @@
 # Game Recommendation Engine
 A content-based game recommendation system built using Python, Pandas, scikit-learn, and Streamlit
 
-This application helps recommend games to users based on similarities in genre, description, and platform. Users can search for a game, customize recommendation filters, or use the 'Surprise Me' feature to randomize a ga,e that matches their criteria.
+This application helps recommend games to users based on similarities in genre, description, and platform. Users can search for a game, customize recommendation filters, or use the 'Surprise Me' feature to randomize a game that matches their criteria.
 
 ## Features
 
@@ -22,11 +22,11 @@ This application helps recommend games to users based on similarities in genre, 
 
 ## How this application works
 
-The recommendation system uses a content-based approach
+The recommendation system uses a content-based filtering approach
 
 ### 1. Data Preprocessing
 
-The game dataset (csv file) is cleaned before recommendations are generated
+The game dataset (CSV file) is cleaned before recommendations are generated
 
 Includes:
 
@@ -44,13 +44,13 @@ Three separate TF-IDF representations are created:
 - Game descriptions
 - Platforms
 
-TF-IDF converts the text-ased ame info into numerical feature vectors
+TF-IDF converts the text-based game info into numerical feature vectors
 
 ### 3. Similarity Calculation
 
 Cosine similarity is used to compare the selected game against the rest of the dataset.
 
-The recommendation score comines these three similarity measurements:
+The recommendation score combines these three similarity measurements:
 
 - Genre Similarity: 30%
 - Description Similarity: 60%
@@ -100,5 +100,52 @@ GameRecommendationEngine/
 ├── app.py
 ├── main.py
 ├── requirements.txt
-├── .env
 └── README.md
+```
+
+### Evaluation
+
+The recommendation system was evaluated using a small set of test games across different genres and game types
+
+Examples of games included:
+- Undertale
+- Hades
+- Elden Ring
+- Hollow Knight
+- Celeste
+- Minecraft
+- Portal 2
+- Resident Evil 4
+- Persona 5 Royal
+- Stray
+
+This evaluation examines recommendation similarity and genre diversity across the test set.
+
+### Setup
+
+## 1. Clone this repository
+
+```bash
+git clone https://github.com/lynrasco/game-recommend-engine.git
+cd GameRecommendationEngine
+```
+
+## 2. Install necessary dependencies
+
+```bash
+pip install -r requirements.txt
+```
+
+## 3. Configure RAWG API
+
+Create a .env file in the project root:
+
+```bash
+RAWG_API_KEY=api_key_here
+```
+
+## 4. Running the application
+
+```bash
+streamlit run app.py
+```

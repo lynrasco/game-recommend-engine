@@ -95,20 +95,50 @@ st.markdown(
         color: #8F97A6;
         margin-top: 0.3rem;
     }
+    .search-section {
+        background-color: #171B24;
+        border: 1px solid #2C3240;
+        border-radius: 16px;
+        padding: 1.5rem;
+        margin: 1.5rem 0 2rem 0;
+    }
+    .search-title {
+        font-size: 1.35rem;
+        font-weight: 700;
+        margin-bottom: 0.25rem;
+    }
+    .search-subtitle {
+        color: #929AAA;
+        font-size: 0.9rem;
+        margin-bottom: 1.25rem;
+    }
+    .hero {
+        padding: 1rem 0 1.5rem 0;
+    }
+    .hero h1 {
+        margin-bottom: 0.35rem;
+    }
 
+    .hero p {
+        color: #A9B0BD;
+        font-size: 1.1rem;
+        margin: 0;
+    }
 
     </style>
     """,
     unsafe_allow_html=True
 )
 
-st.title("Game Recommendation Engine")
-
 st.markdown(
     """
-    <p style="font-size: 1.15rem; color: #a9b0bd; margin-top: -10px;">
-        Discover your next game using genre, description, and platform similarity.
-    </p>
+    <div class="hero">
+        <h1>Game Recommendation Engine</h1>
+        <p>
+            Discover your next game using genre, description,
+            and platform similarity.
+        </p>
+    </div>
     """,
     unsafe_allow_html=True
 )
@@ -142,12 +172,16 @@ st.sidebar.markdown(
     unsafe_allow_html=True
 )
 
+st.sidebar.markdown("### Results")
+
 number_of_recommendations = st.sidebar.slider(
     "Number of recommendations",
     3,
     10,
     5
 )
+
+st.sidebar.markdown("### Filters")
 
 minimum_rating = st.sidebar.slider(
     "Minimum game rating",
@@ -157,25 +191,9 @@ minimum_rating = st.sidebar.slider(
     0.1
 )
 
-platform_options = ["Any Platform"] + sorted(
-    {
-        platform
-        for platforms in games["Platform_List"]
-        for platform in platforms
-    }
-)
-
 selected_platform = st.sidebar.selectbox(
     "Platform",
     platform_options
-)
-
-genre_options = sorted(
-    {
-        genre
-        for genres in games["Genre_List"]
-        for genre in genres
-    }
 )
 
 selected_genre = st.sidebar.selectbox(
@@ -190,10 +208,17 @@ minimum_year = st.sidebar.slider(
     int(games["Release_Year"].min())
 )
 
-st.subheader("Find your next game")
-
-st.caption(
-    "Choose a game you already love and we'll find similar titles."
+st.markdown(
+    """
+    <div class="search-section">
+        <div class="search-title">
+            Find your next game
+        </div>
+        <div class="search-subtitle">
+            Choose a game you already love and discover similar titles.
+        </div>
+    """,
+    unsafe_allow_html=True
 )
 
 search_col, _ = st.columns([1, 2])
