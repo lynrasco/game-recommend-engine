@@ -40,9 +40,11 @@ Includes:
 
 Three separate TF-IDF representations are created:
 
-- Genres
-- Game descriptions
-- Platforms
+| Feature | Weight |
+|---|---:|
+| Genre | 30% |
+| Description | 60% |
+| Platform | 10% |
 
 TF-IDF converts the text-based game info into numerical feature vectors
 
@@ -103,7 +105,7 @@ GameRecommendationEngine/
 └── README.md
 ```
 
-### Evaluation
+## Evaluation
 
 The recommendation system was evaluated using a small set of test games across different genres and game types
 
@@ -121,22 +123,22 @@ Examples of games included:
 
 This evaluation examines recommendation similarity and genre diversity across the test set.
 
-### Setup
+## Setup
 
-## 1. Clone this repository
+### 1. Clone this repository
 
 ```bash
 git clone https://github.com/lynrasco/game-recommend-engine.git
 cd GameRecommendationEngine
 ```
 
-## 2. Install necessary dependencies
+### 2. Install necessary dependencies
 
 ```bash
 pip install -r requirements.txt
 ```
 
-## 3. Configure RAWG API
+### 3. Configure RAWG API
 
 Create a .env file in the project root:
 
@@ -144,7 +146,7 @@ Create a .env file in the project root:
 RAWG_API_KEY=api_key_here
 ```
 
-## 4. Running the application
+### 4. Running the application
 
 ```bash
 streamlit run app.py
