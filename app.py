@@ -180,6 +180,14 @@ st.html(
             margin: 0.4rem 0;
             color: #D9DDE5;
         }
+
+        div[data-testid="stVerticalBlockBorderWrapper"] {
+            background-color: #171B24;
+            border: 1px solid #2C3240;
+            border-radius: 18px;
+            padding: 1rem;
+            margin: 1.25rem 0;
+        }
     </style>
     """
 )

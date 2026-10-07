@@ -38,7 +38,7 @@ def display_similarity(label, score):
 
 def display_recommendation(recommendation, selected_game_title):
 
-    with st.container():
+    with st.container(border=True):
 
         cover_url = get_game_cover(recommendation["title"])
 
@@ -84,6 +84,15 @@ def display_recommendation(recommendation, selected_game_title):
                     developers = ast.literal_eval(developers)
                 except (ValueError, SyntaxError):
                     developers = [developers]
+
+            if not isinstance(developers, list):
+                developers = [developers]
+
+                developers = [
+                    str(developer)
+                    for developer in developers
+                    if developer
+                ]
 
             st.caption(
                 "Developer: " + ", ".join(developers)

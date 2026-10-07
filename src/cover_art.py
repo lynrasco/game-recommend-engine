@@ -45,5 +45,3 @@ def get_game_cover(title):
 
     except requests.RequestException:
         return None
-
-    

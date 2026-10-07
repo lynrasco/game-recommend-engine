@@ -24,20 +24,23 @@ def evaluate_recommendations(
             print(f"{title}: Game not found.")
             continue
 
-        game_index = matching_games.index[0]
+        #game_index = matching_games.index[0]
+        game_position = games.index.get_loc(
+            matching_games.index[0]
+        )
 
         genre_scores = cosine_similarity(
-            genre_matrix[game_index],
+            genre_matrix[game_position],
             genre_matrix
         ).flatten()
 
         summary_scores = cosine_similarity(
-            summary_matrix[game_index],
+            summary_matrix[game_position],
             summary_matrix
         ).flatten()
 
         platform_scores = cosine_similarity(
-            platform_matrix[game_index],
+            platform_matrix[game_position],
             platform_matrix
         ).flatten()
 
@@ -62,12 +65,12 @@ def evaluate_recommendations(
                 games.iloc[index]["Genre_List"]
             )
 
-        genre_diversity = len(recommendation_genres)
+        unique_genres = len(recommendation_genres)
 
         results.append({
             "game": title,
             "average_similarity": average_similarity,
-            "genre_diversity": genre_diversity
+            "unique_genres": unique_genres
         })
 
     return results
@@ -109,6 +112,6 @@ if __name__ == "__main__":
             f"\n{result['game']}"
             f"\nAverage similarity: "
             f"{result['average_similarity']:.2f}"
-            f"\nGenre diversity: "
-            f"{result['genre_diversity']} genres"
+            f"\nUnique genres: "
+            f"{result['unique_genres']}"
         )

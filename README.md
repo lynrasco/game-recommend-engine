@@ -20,6 +20,20 @@ This application helps recommend games to users based on similarities in genre, 
 - Explanation for each game recommendation
 - Streamlit web interface
 
+
+## Technical Highlights
+
+- Built a content-based recommendation system using TF-IDF and cosine similarity
+- Uses three independent feature representations for genre, description, and platform
+- Combines similarity scores using a configurable weighted scoring model
+- Applies user-selected filters before ranking recommendations
+- Uses Streamlit caching to avoid repeatedly preprocessing the dataset
+- Integrates the RAWG API to dynamically retrieve game artwork
+- Provides recommendation explanations using shared genres and feature similarity
+- Separates data loading, recommendation logic, evaluation, artwork retrieval, and UI components into dedicated modules
+- Includes a reproducible evaluation script for testing recommendation similarity
+
+
 ## How It Works
 
 The recommendation system uses a content-based filtering approach
@@ -46,7 +60,9 @@ Three separate TF-IDF representations are created:
 | Description | 60% |
 | Platform | 10% |
 
-TF-IDF converts the text-based game info into numerical feature vectors
+TF-IDF converts the text-based game info into numerical feature vectors.
+
+Description similarity receives the highest weight because game descriptions provide more detailed information about gameplay and themes, while genre and platform provide additional contextual signals.
 
 ### 3. Similarity Calculation
 
@@ -100,7 +116,6 @@ GameRecommendationEngine/
 │   └── ui.py
 │
 ├── app.py
-├── main.py
 ├── requirements.txt
 └── README.md
 ```
@@ -114,25 +129,39 @@ The application is divided into several components:
 | `src/recommend.py` | TF-IDF matrices, similarity calculations, filtering, and ranking |
 | `src/ui.py` | Recommendation cards and recommendation explanations |
 | `src/cover_art.py` | RAWG API integration for game artwork |
-| `src/evaluate.py` | Evaluation of recommendation quality |
+| `src/evaluate.py` | Evaluation of recommendation similarity and unique genre coverage |
 
 ## Evaluation
 
-The recommendation system was evaluated using a small set of test games across different genres and game types
+The recommendation system was evaluated using a small test set of 10 games covering different genres and game types.
 
-Examples of games included:
-- Undertale
-- Hades
-- Elden Ring
-- Hollow Knight
-- Celeste
-- Minecraft
-- Portal 2
-- Resident Evil 4
-- Persona 5 Royal
-- Stray
+The evaluation measures:
 
-This evaluation examines recommendation similarity and genre diversity across the test set.
+- Average weighted similarity of the top 5 recommendations
+- Number of unique genres represented across the recommendations
+
+| Test Game | Average Weighted Similarity | Unique Genres |
+|---|---:|---:|
+| Undertale | 0.42 | 5 |
+| Hades | 0.44 | 5 |
+| Elden Ring | 0.50 | 2 |
+| Hollow Knight | 0.43 | 3 |
+| Celeste | 0.42 | 3 |
+| Minecraft | 0.52 | 2 |
+| Portal 2 | 0.48 | 5 |
+| Resident Evil 4 | 0.62 | 3 |
+| Persona 5 Royal | 0.41 | 3 |
+| Stray | 0.44 | 2 |
+
+The results show that the system generally produces recommendations with moderate to high similarity to the selected game. Resident Evil 4 produced the highest average similarity at 0.62, while Persona 5 Royal produced the lowest at 0.41.
+
+This evaluation is primarily a consistency check of the content-based recommendation system rather than a measure of user satisfaction or recommendation accuracy. A larger evaluation dataset and human/user-based evaluation would provide a stronger measure of recommendation quality.
+
+The evaluation can be reproduced using the command:
+
+```bash
+python -m src.evaluate
+```
 
 ## Setup
 
