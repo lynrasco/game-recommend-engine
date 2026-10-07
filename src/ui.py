@@ -3,6 +3,38 @@ import ast
 
 from src.cover_art import get_game_cover
 
+def display_similarity(label, score):
+    st.markdown(
+        f"""
+        <div style="margin-bottom: 0.8rem;">
+            <div style="
+                display: flex;
+                justify-content: space-between;
+                margin-bottom: 0.25rem;
+            ">
+                <span style="color: #C9CED8;">{label}</span>
+                <span style="color: #F1F3F5; font-weight: 600;">
+                    {score:.0%}
+                </span>
+            </div>
+
+            <div style="
+                height: 7px;
+                background: #2A2F3B;
+                border-radius: 10px;
+                overflow: hidden;
+            ">
+                <div style="
+                    width: {score * 100}%;
+                    height: 100%;
+                    background: #8B7CF6;
+                    border-radius: 10px;
+                "></div>
+            </div>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
 
 def display_recommendation(recommendation, selected_game_title):
 
@@ -37,7 +69,6 @@ def display_recommendation(recommendation, selected_game_title):
                     f"{recommendation['overall_similarity']:.0%}"
                 )
 
-            # Genres
             genres = recommendation["genres"]
 
             if genres:
@@ -100,25 +131,20 @@ def display_recommendation(recommendation, selected_game_title):
         # Similarity breakdown
         st.markdown("#### Similarity breakdown")
 
-        col1, col2, col3 = st.columns(3)
+        display_similarity(
+            "Genre",
+            recommendation["genre_similarity"]
+        )
 
-        with col1:
-            st.metric(
-                "Genre",
-                f"{recommendation['genre_similarity']:.0%}"
-            )
+        display_similarity(
+            "Description",
+            recommendation["summary_similarity"]
+        )
 
-        with col2:
-            st.metric(
-                "Description",
-                f"{recommendation['summary_similarity']:.0%}"
-            )
-
-        with col3:
-            st.metric(
-                "Platform",
-                f"{recommendation['platform_similarity']:.0%}"
-            )
+        display_similarity(
+            "Platform",
+            recommendation["platform_similarity"]
+        )
 
         # Why this game?
         display_why_this_game(
@@ -170,4 +196,11 @@ def display_why_this_game(recommendation, selected_game_title):
     st.markdown("#### Why this game?")
 
     for reason in reasons:
-        st.markdown(f"- {reason}")
+        st.markdown(
+            f"""
+            <div class="reason">
+                ✓ {reason}
+            </div>
+            """,
+            unsafe_allow_html=True
+        )

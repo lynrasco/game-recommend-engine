@@ -20,7 +20,7 @@ This application helps recommend games to users based on similarities in genre, 
 - Explanation for each game recommendation
 - Streamlit web interface
 
-## How this application works
+## How It Works
 
 The recommendation system uses a content-based filtering approach
 
@@ -82,7 +82,7 @@ Games are ranked according to their final weighted similarity score, and the hig
 - RAWG API
 - Git / GitHub
 
-## Project Structure
+## Project Structure & Architecture
 
 ```text
 GameRecommendationEngine/
@@ -104,6 +104,17 @@ GameRecommendationEngine/
 ├── requirements.txt
 └── README.md
 ```
+
+The application is divided into several components:
+
+| File | Responsibility |
+|---|---|
+| `app.py` | Streamlit application, user interaction, and recommendation workflow |
+| `src/load_data.py` | Dataset loading and preprocessing |
+| `src/recommend.py` | TF-IDF matrices, similarity calculations, filtering, and ranking |
+| `src/ui.py` | Recommendation cards and recommendation explanations |
+| `src/cover_art.py` | RAWG API integration for game artwork |
+| `src/evaluate.py` | Evaluation of recommendation quality |
 
 ## Evaluation
 
@@ -151,3 +162,20 @@ RAWG_API_KEY=api_key_here
 ```bash
 streamlit run app.py
 ```
+
+## Limitations & Future Improvements
+
+This current system uses metadata-based content similarity.
+As a result, games with overlapping genre labels can receive
+high genre similarity even when their gameplay experiences
+differ significantly.
+
+Potential improvements include:
+
+- Incorporating user ratings and play history
+- Adding game tags and keywords
+- Including developer and publisher information
+- Experimenting with different feature weights
+- Using semantic embeddings for game descriptions
+- Expanding the evaluation dataset
+- Comparing the content-based approach with collaborative filtering

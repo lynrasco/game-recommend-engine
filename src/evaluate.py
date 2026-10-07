@@ -1,5 +1,5 @@
-from load_data import load_games
-from recommend import create_matrices
+from src.load_data import load_games
+from src.recommend import create_matrices
 from sklearn.metrics.pairwise import cosine_similarity
 
 

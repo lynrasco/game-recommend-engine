@@ -118,6 +118,68 @@ st.html(
             color: #8F97A6;
             margin-top: 0.3rem;
         }
+
+        .recommendation-spacer {
+            height: 24px;
+        }
+
+        .recommendation-card {
+            background: #171B24;
+            border: 1px solid #2C3240;
+            border-radius: 18px;
+            padding: 1.25rem;
+            margin: 1.25rem 0;
+        }
+
+        .recommendation-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #F1F3F5;
+            margin-bottom: 0.25rem;
+        }
+
+        .recommendation-genres {
+            color: #9CA4B3;
+            font-size: 0.9rem;
+            margin-bottom: 0.8rem;
+        }
+
+        .recommendation-meta {
+            color: #A9B0BD;
+            font-size: 0.85rem;
+            line-height: 1.6;
+        }
+
+        .match-label {
+            color: #929AAA;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+
+        .match-score {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #F1F3F5;
+        }
+
+        .section-label {
+            color: #929AAA;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            margin-top: 1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .reason {
+            background: #202532;
+            border-radius: 8px;
+            padding: 0.6rem 0.8rem;
+            margin: 0.4rem 0;
+            color: #D9DDE5;
+        }
     </style>
     """
 )
