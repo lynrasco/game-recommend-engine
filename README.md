@@ -169,7 +169,7 @@ python -m src.evaluate
 
 ```bash
 git clone https://github.com/lynrasco/game-recommend-engine.git
-cd GameRecommendationEngine
+cd game-recommend-engine
 ```
 
 ### 2. Install necessary dependencies

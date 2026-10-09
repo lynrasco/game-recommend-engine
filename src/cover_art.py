@@ -1,15 +1,12 @@
 # GameRecommendationEngine/src/cover_art.py
 import os
-
 import requests
 from dotenv import load_dotenv
 import streamlit as st
 
-
 load_dotenv()
 
 RAWG_API_KEY = os.getenv("RAWG_API_KEY")
-
 
 @st.cache_data
 def get_game_cover(title):

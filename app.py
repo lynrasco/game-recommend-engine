@@ -10,7 +10,6 @@ st.set_page_config(
     layout="wide"
 )
 
-
 st.html(
     """
     <style>
@@ -185,8 +184,7 @@ st.html(
             background-color: #171B24;
             border: 1px solid #2C3240;
             border-radius: 18px;
-            padding: 1rem;
-            margin: 1.25rem 0;
+            margin: 0.75rem 0 1.25rem;
         }
     </style>
     """

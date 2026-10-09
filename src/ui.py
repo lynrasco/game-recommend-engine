@@ -1,19 +1,37 @@
 import streamlit as st
 import ast
-
+import math
 from src.cover_art import get_game_cover
+from html import escape
 
 def display_similarity(label, score):
-    st.markdown(
+    try:
+        score = float(score)
+    except (TypeError, ValueError):
+        score = 0.0
+
+    if not math.isfinite(score):
+        score = 0.0
+
+    score = max(0.0, min(1.0, score))
+    percentage = score * 100
+
+    st.html(
         f"""
-        <div style="margin-bottom: 0.8rem;">
+        <div style="margin-bottom: 1rem;">
             <div style="
                 display: flex;
                 justify-content: space-between;
-                margin-bottom: 0.25rem;
+                align-items: center;
+                margin-bottom: 0.4rem;
             ">
-                <span style="color: #C9CED8;">{label}</span>
-                <span style="color: #F1F3F5; font-weight: 600;">
+                <span style="color: #C9CED8;">
+                    {escape(label)}
+                </span>
+                <span style="
+                    color: #F1F3F5;
+                    font-weight: 600;
+                ">
                     {score:.0%}
                 </span>
             </div>
@@ -25,16 +43,16 @@ def display_similarity(label, score):
                 overflow: hidden;
             ">
                 <div style="
-                    width: {score * 100}%;
+                    width: {percentage}%;
                     height: 100%;
                     background: #8B7CF6;
                     border-radius: 10px;
                 "></div>
             </div>
         </div>
-        """,
-        unsafe_allow_html=True
+        """
     )
+
 
 def display_recommendation(recommendation, selected_game_title):
 
@@ -88,39 +106,55 @@ def display_recommendation(recommendation, selected_game_title):
             if not isinstance(developers, list):
                 developers = [developers]
 
-                developers = [
-                    str(developer)
-                    for developer in developers
-                    if developer
-                ]
+            developers = [
+                str(developer)
+                for developer in developers
+                if developer and str(developer).lower() != "nan"
+            ]
 
             st.caption(
-                "Developer: " + ", ".join(developers)
+                "Developer: " + (", ".join(developers) or "Unknown")
             )
 
             # Release date
-            st.caption(
-                "Release date: "
-                + str(recommendation["release_date"])
-            )
+            release_date = recommendation.get("release_date")
+
+            if release_date is not None and str(release_date).lower() not in {
+                "nan", "none", "nat", ""
+            }:
+                st.caption(f"Release date: {release_date}")
+            else:
+                st.caption("Release date: Unknown")
 
             # Platforms
-            st.caption(
-                "Platforms: "
-                + recommendation["platforms"]
-            )
+            platforms = recommendation.get("platforms")
+
+            if isinstance(platforms, (list, tuple, set)):
+                platforms = ", ".join(str(p) for p in platforms if p)
+
+            if platforms is not None and str(platforms).lower() not in {
+                "nan", "none", ""
+            }:
+                st.caption(f"Platforms: {platforms}")
+            else:
+                st.caption("Platforms: Unknown")
 
             # Rating
             rating = recommendation["rating"]
 
-            if rating == rating:
+            try:
+                rating = float(rating)
+            except (TypeError, ValueError):
+                rating = float("nan")
+
+            if math.isfinite(rating) and 0 <= rating <= 5:
                 full_stars = round(rating)
                 empty_stars = 5 - full_stars
 
                 stars = "★" * full_stars + "☆" * empty_stars
 
                 st.write(
-                    f"**Rating:** {stars}  `{rating:.1f}/5`"
+                    f"**Rating:** {stars} `{rating:.1f}/5`"
                 )
             else:
                 st.write("**Rating:** Not rated")
@@ -159,11 +193,6 @@ def display_recommendation(recommendation, selected_game_title):
         display_why_this_game(
             recommendation,
             selected_game_title
-        )
-
-        st.markdown(
-            "<div class='recommendation-spacer'></div>",
-            unsafe_allow_html=True
         )
 
 
